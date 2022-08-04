@@ -16,8 +16,9 @@ class CustomMap extends StatefulWidget {
 
 class _CustomMapState extends State<CustomMap> {
   final loc.Location location = loc.Location();
-  late GoogleMapController _controller;
-  bool _added = false;
+
+  //late GoogleMapController _controller;
+  //bool _added = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,9 @@ class _CustomMapState extends State<CustomMap> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("location").snapshots(),
         builder: (context, snapshot) {
-          if (_added) {
+          /*if (_added) {
             changeMyMap(snapshot);
-          }
+          }*/
 
           if (snapshot.hasError) {
             return const Center(child: Text("Something went wrong"));
@@ -40,47 +41,44 @@ class _CustomMapState extends State<CustomMap> {
 
           if (data != null && data.docs.isEmpty) {
             return const SizedBox();
-          }
-
-          return GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                snapshot.data!.docs.singleWhere(
-                    (element) => element.id == widget.userId)['latitude'],
-                snapshot.data!.docs.singleWhere(
-                    (element) => element.id == widget.userId)['longitude'],
+          } else {
+            return GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(24.894891656253854, 91.86870006890493),
+                zoom: 13,
               ),
-              zoom: 14.47,
-            ),
-            mapType: MapType.normal,
-            markers: {
-              Marker(
-                position: LatLng(
-                  snapshot.data!.docs.singleWhere(
-                      (element) => element.id == widget.userId)['latitude'],
-                  snapshot.data!.docs.singleWhere(
-                      (element) => element.id == widget.userId)['longitude'],
+              mapType: MapType.normal,
+              markers: Set<Marker>.of(
+                snapshot.data!.docs.map(
+                  (element) {
+                    return Marker(
+                      position: LatLng(
+                        element['latitude'],
+                        element['longitude'],
+                      ),
+                      markerId: MarkerId(element.id),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueMagenta),
+                    );
+                  },
                 ),
-                markerId: const MarkerId('id'),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueMagenta),
               ),
-            },
-            onMapCreated: (GoogleMapController controller) async {
-              if (!_added) {
-                setState(() {
-                  _controller = controller;
-                  _added = true;
-                });
-              }
-            },
-          );
+              /*onMapCreated: (GoogleMapController controller) async {
+                if (!_added) {
+                  setState(() {
+                    _controller = controller;
+                    _added = true;
+                  });
+                }
+              },*/
+            );
+          }
         },
       ),
     );
   }
 
-  Future<void> changeMyMap(AsyncSnapshot<QuerySnapshot> snapshot) async {
+/*Future<void> changeMyMap(AsyncSnapshot<QuerySnapshot> snapshot) async {
     await _controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -93,5 +91,5 @@ class _CustomMapState extends State<CustomMap> {
             zoom: 14.47),
       ),
     );
-  }
+  }*/
 }

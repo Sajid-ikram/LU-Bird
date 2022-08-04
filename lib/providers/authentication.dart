@@ -96,6 +96,7 @@ class Authentication with ChangeNotifier {
 
   Future signOut() async {
     await _firebaseAuth.signOut();
+    notifyListeners();
   }
 
   Future<String> resetPassword(String email, BuildContext context) async {

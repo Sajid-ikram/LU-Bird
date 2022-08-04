@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/auth/landing_page.dart';
 import 'package:lu_bird/view/auth/verification.dart';
 import 'package:lu_bird/view/home/home.dart';
 import 'package:lu_bird/view/public_widgets/custom_loading.dart';
+import 'package:provider/provider.dart';
 
 class Initial extends StatefulWidget {
   const Initial({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ class Initial extends StatefulWidget {
 
 class _InitialState extends State<Initial> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -43,6 +46,12 @@ class MiddleOfHomeAndSignIn extends StatefulWidget {
 }
 
 class _MiddleOfHomeAndSignInState extends State<MiddleOfHomeAndSignIn> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<ProfileProvider>(context, listen: false).getUserInfo();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
