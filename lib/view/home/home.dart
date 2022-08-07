@@ -1,9 +1,13 @@
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lu_bird/view/home/widgets/home_map.dart';
+import 'package:lu_bird/providers/profile_provider.dart';
+import 'package:lu_bird/view/home/widgets/home_explore.dart';
 import 'package:lu_bird/view/home/widgets/home_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lu_bird/view/public_widgets/app_colors.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_map.dart';
 
@@ -15,93 +19,66 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int _bottomNavIndex = 0;
 
   List<IconData> icons = [
+    FontAwesomeIcons.house,
     FontAwesomeIcons.busSimple,
-    FontAwesomeIcons.calendarDays,
-    FontAwesomeIcons.spinner,
-    FontAwesomeIcons.spinner,
-    FontAwesomeIcons.spinner,
-    FontAwesomeIcons.spinner,
-
-  ];
-
-  List<String> names = [
-    "Bus Notice",
-    "Bus Routine",
-    "Upcoming",
-    "Upcoming",
-    "Upcoming",
-    "Upcoming",
+    FontAwesomeIcons.comment,
+    FontAwesomeIcons.gear,
   ];
 
   @override
   Widget build(BuildContext context) {
+    var pro = Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
-
-      body: Column(
+      resizeToAvoidBottomInset: true,
+      extendBody: true,
+      body: Stack(
         children: [
-          SizedBox(
-            height: 150.h,
-            child: homeUserInfo(context),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CustomMap("user1")));
-            },
-            child: homeMap(),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.w),
-              child: GridView.builder(
-                padding: EdgeInsets.only(top: 15.h),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, childAspectRatio: 1.3),
-                itemCount: 6,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: EdgeInsets.only(
-                      right: index % 2 == 0 ? 10.w : 0,
-                      bottom: 10.h,
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 1.5,
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.2),
-                        ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.sp)),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(15.sp),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50.sp),
-                              color: Colors.greenAccent.withOpacity(0.1),
-                            ),
-                            child:  Icon(icons[index],size: 18.sp,),
-                          ),
-                          SizedBox(height: 5.h),
-                          Text(
-                            names[index],
-                            style: TextStyle(
-                                fontSize: 13.sp, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
+          Positioned(
+            bottom: 0,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const CustomMap()));
+              },
+              child: ShaderMask(
+                shaderCallback: (rect) {
+                  return const LinearGradient(
+                    begin: Alignment.center,
+                    end: Alignment.topCenter,
+                    colors: [Colors.black, Colors.transparent],
+                  ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
                 },
+                blendMode: BlendMode.dstIn,
+                child: SizedBox(
+                  height: 430.h,
+                  width: 360.w,
+                  child: Image.asset(
+                    "assets/map.png",
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
             ),
-          )
+          ),
+          buildExplore(),
+          buildHomeProfile(pro),
         ],
+      ),
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+        icons: icons,
+        notchSmoothness: NotchSmoothness.softEdge,
+        activeIndex: _bottomNavIndex,
+        gapLocation: GapLocation.none,
+        iconSize: 19.sp,
+        inactiveColor: Colors.grey,
+        activeColor: primaryColor,
+        leftCornerRadius: 40.sp,
+        rightCornerRadius: 40.sp,
+        onTap: (index) => setState(() => _bottomNavIndex = index),
+        //other params
       ),
     );
   }
