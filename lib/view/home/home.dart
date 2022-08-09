@@ -1,14 +1,12 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/home/widgets/home_explore.dart';
 import 'package:lu_bird/view/home/widgets/home_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lu_bird/view/public_widgets/app_colors.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
+import '../auth/widgets/snackBar.dart';
 import 'custom_map.dart';
 
 class Home extends StatefulWidget {
@@ -19,29 +17,42 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _bottomNavIndex = 0;
 
-  List<IconData> icons = [
-    FontAwesomeIcons.house,
-    FontAwesomeIcons.busSimple,
-    FontAwesomeIcons.comment,
-    FontAwesomeIcons.gear,
-  ];
+  Future<bool> requestLocationPermission() async {
+    /// status can either be: granted, denied, restricted or permanentlyDenied
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      return true;
+    } else if (status.isDenied) {
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+      if (await Permission.location.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        return true;
+      }
+    }
+    return false;
+  }
+
 
   @override
   Widget build(BuildContext context) {
     var pro = Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      extendBody: true,
+
       body: Stack(
         children: [
           Positioned(
             bottom: 0,
             child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const CustomMap()));
+              onTap: () async {
+                bool result = await requestLocationPermission();
+                if(result){
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const CustomMap()));
+                }else{
+                  snackBar(context, "Location is not granted");
+                }
+
               },
               child: ShaderMask(
                 shaderCallback: (rect) {
@@ -67,19 +78,7 @@ class _HomeState extends State<Home> {
           buildHomeProfile(pro),
         ],
       ),
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        icons: icons,
-        notchSmoothness: NotchSmoothness.softEdge,
-        activeIndex: _bottomNavIndex,
-        gapLocation: GapLocation.none,
-        iconSize: 19.sp,
-        inactiveColor: Colors.grey,
-        activeColor: primaryColor,
-        leftCornerRadius: 40.sp,
-        rightCornerRadius: 40.sp,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-        //other params
-      ),
+
     );
   }
 }

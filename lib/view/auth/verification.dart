@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../custom_navigation.dart';
 import '../../providers/authentication.dart';
 import '../home/home.dart';
 import '../public_widgets/app_colors.dart';
@@ -93,7 +94,7 @@ class _VerificationState extends State<Verification> {
             ),
           )
         : isVerified
-            ? const Home()
+            ? const CustomNavigation()
             : _buildScaffold();
   }
 
