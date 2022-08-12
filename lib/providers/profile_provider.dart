@@ -23,8 +23,6 @@ class ProfileProvider extends ChangeNotifier {
       email = userInfo["email"];
       department = userInfo["department"];
       currentUserUid = user.uid;
-      print(profileName);
-      print("===================2");
       notifyListeners();
     }
 

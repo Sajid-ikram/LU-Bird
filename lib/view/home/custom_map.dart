@@ -1,13 +1,19 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lu_bird/providers/map_provider.dart';
+import 'package:provider/provider.dart';
+import '../auth/widgets/snackBar.dart';
 import '../public_widgets/custom_loading.dart';
+import 'dart:ui' as ui;
 
 class CustomMap extends StatefulWidget {
-
-
   const CustomMap({Key? key}) : super(key: key);
 
   @override
@@ -16,7 +22,28 @@ class CustomMap extends StatefulWidget {
 
 class _CustomMapState extends State<CustomMap> {
   final loc.Location location = loc.Location();
+  bool isIconSelected = false;
+  bool _added = false;
+  StreamSubscription<loc.LocationData>? _locationSub;
+  late GoogleMapController _controller;
 
+  Uint8List? userLocationIcon;
+  Uint8List? busLocationIcon;
+  loc.LocationData? userLocation;
+  CameraPosition? userCameraPosition;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMarkers();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +51,6 @@ class _CustomMapState extends State<CustomMap> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("location").snapshots(),
         builder: (context, snapshot) {
-
-
           if (snapshot.hasError) {
             return const Center(child: Text("Something went wrong"));
           }
@@ -38,48 +63,126 @@ class _CustomMapState extends State<CustomMap> {
           if (data != null && data.docs.isEmpty) {
             return const SizedBox();
           } else {
-            return GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(24.894891656253854, 91.86870006890493),
-                zoom: 13,
-              ),
-              mapType: MapType.normal,
-              markers: Set<Marker>.of(
-                snapshot.data!.docs.map(
-                  (element) {
-                    return Marker(
-                      position: LatLng(
-                        element['latitude'],
-                        element['longitude'],
-                      ),
-                      markerId: MarkerId(element.id),
-                      icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueMagenta),
-                    );
-                  },
-                ),
-
-              ),
-
-            );
+            return isIconSelected
+                ? Consumer<MapProvider>(
+                    builder: (BuildContext context, value, Widget? child) {
+                      print(
+                          "-------------------------------------------------------");
+                      return buildGoogleMap(snapshot);
+                    },
+                  )
+                : buildLoadingWidget();
           }
         },
       ),
     );
   }
 
-/*Future<void> changeMyMap(AsyncSnapshot<QuerySnapshot> snapshot) async {
+  GoogleMap buildGoogleMap(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+    return GoogleMap(
+      zoomGesturesEnabled: true,
+      zoomControlsEnabled: true,
+      onCameraMove: (CameraPosition cameraPosition) {
+        userCameraPosition = cameraPosition;
+      },
+      initialCameraPosition: CameraPosition(
+        target: LatLng(userLocation!.latitude!, userLocation!.longitude!),
+        zoom: 15,
+      ),
+      mapType: MapType.normal,
+      markers: Set<Marker>.of(
+        snapshot.data!.docs.map(
+          (element) {
+            return element['name'] != "forUserLocation"
+                ? Marker(
+                    position: LatLng(
+                      element['latitude'],
+                      element['longitude'],
+                    ),
+                    markerId: MarkerId(element.id),
+                    infoWindow: const InfoWindow(
+                      title: "Route 1",
+                    ),
+                    icon: BitmapDescriptor.fromBytes(
+                      busLocationIcon!,
+                    ),
+                  )
+                : Marker(
+                    position: LatLng(
+                        userLocation!.latitude!, userLocation!.longitude!),
+                    markerId: MarkerId(element.id),
+                    icon: BitmapDescriptor.fromBytes(userLocationIcon!),
+                  );
+          },
+        ),
+      ),
+      onMapCreated: (GoogleMapController controller) async {
+        if (!_added) {
+          _controller = controller;
+          _added = true;
+          _onUserLocationChange();
+        }
+      },
+    );
+  }
+
+  Future<void> changeMyMap() async {
     await _controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-            target: LatLng(
-              snapshot.data!.docs.singleWhere(
-                  (element) => element.id == widget.userId)['latitude'],
-              snapshot.data!.docs.singleWhere(
-                  (element) => element.id == widget.userId)['longitude'],
-            ),
-            zoom: 14.47),
+          target: userCameraPosition == null
+              ? LatLng(
+                  userLocation!.latitude!,
+                  userLocation!.longitude!,
+                )
+              : userCameraPosition!.target,
+          zoom: userCameraPosition == null ? 15 : userCameraPosition!.zoom,
+          tilt: userCameraPosition == null ? 0 : userCameraPosition!.tilt,
+          bearing: userCameraPosition == null ? 0 : userCameraPosition!.bearing,
+        ),
       ),
     );
-  }*/
+  }
+
+  getMarkers() async {
+    userLocationIcon = await getBytesFromAssets("assets/user.png", 100);
+    busLocationIcon = await getBytesFromAssets("assets/bus.png", 80);
+    userLocation = await location.getLocation();
+
+    if (userLocationIcon != null &&
+        busLocationIcon != null &&
+        userLocation != null) {
+      setState(() {
+        isIconSelected = true;
+      });
+    } else {
+      return snackBar(context, "Something Went Wrong");
+    }
+  }
+
+  Future<void> _onUserLocationChange() async {
+    _locationSub = location.onLocationChanged.handleError((onError) {
+      _locationSub!.cancel();
+      setState(() {
+        _locationSub = null;
+      });
+    }).listen((loc.LocationData currentLocation) async {
+      userLocation = currentLocation;
+      if (mounted) {
+        Provider.of<MapProvider>(context, listen: false).onLocationChange();
+      }
+
+      changeMyMap();
+    });
+  }
+
+  Future<Uint8List> getBytesFromAssets(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
 }

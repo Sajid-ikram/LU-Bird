@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lu_bird/providers/authentication.dart';
+import 'package:lu_bird/providers/map_provider.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/auth/landing_page.dart';
 import 'package:lu_bird/view/auth/registration.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => Authentication()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => MapProvider()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 800),

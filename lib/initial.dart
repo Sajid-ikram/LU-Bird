@@ -32,7 +32,7 @@ class _InitialState extends State<Initial> {
         if (snapshot.connectionState == ConnectionState.done) {
           return const MiddleOfHomeAndSignIn();
         }
-        return const Scaffold(body: Center(child: Text("Error")));
+        return const Scaffold(body: Center(child: Text("Something Went Wrong")));
       },
     );
   }

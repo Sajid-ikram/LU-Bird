@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 import '../../providers/authentication.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
-
+import 'dart:typed_data';
 import '../auth/widgets/snackBar.dart';
+
 
 class GPSSetting extends StatefulWidget {
   const GPSSetting({Key? key}) : super(key: key);
@@ -22,11 +23,9 @@ class _GPSSettingState extends State<GPSSetting> {
   final loc.Location location = loc.Location();
   StreamSubscription<loc.LocationData>? _locationSub;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,7 @@ class _GPSSettingState extends State<GPSSetting> {
                 child: const Text("Add My Location")),
             TextButton(
                 onPressed: () {
-                  _listLocation();
+                  _onLocationChange();
                 },
                 child: const Text("Enable Live Location")),
             TextButton(
@@ -80,7 +79,7 @@ class _GPSSettingState extends State<GPSSetting> {
       loc.LocationData? locationResult;
       //final loc.LocationData? locationResult = await _checkPermission();
 
-      if(isAllowed){
+      if (isAllowed) {
         locationResult = await location.getLocation();
       }
 
@@ -93,9 +92,7 @@ class _GPSSettingState extends State<GPSSetting> {
           'longitude': locationResult.longitude,
           'name': pro.profileName,
         });
-
-
-      }else{
+      } else {
         snackBar(context, "Location is not granted");
       }
     } catch (e) {
@@ -103,7 +100,7 @@ class _GPSSettingState extends State<GPSSetting> {
     }
   }
 
-  Future<void> _listLocation() async {
+  Future<void> _onLocationChange() async {
     _locationSub = location.onLocationChanged.handleError((onError) {
       print(onError);
       _locationSub!.cancel();
@@ -130,17 +127,6 @@ class _GPSSettingState extends State<GPSSetting> {
       _locationSub = null;
     });
   }
-
-  /* _requestPermission() async {
-    var status = await Permission.location.request();
-    if (status.isGranted) {
-      print('done');
-    } else if (status.isDenied) {
-      _requestPermission();
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }*/
 
   Future<bool> requestLocationPermission() async {
     /// status can either be: granted, denied, restricted or permanentlyDenied
