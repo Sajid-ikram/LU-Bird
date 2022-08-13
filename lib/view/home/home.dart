@@ -1,3 +1,4 @@
+import 'package:lu_bird/providers/map_provider.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/home/widgets/home_explore.dart';
 import 'package:lu_bird/view/home/widgets/home_profile.dart';
@@ -17,7 +18,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   Future<bool> requestLocationPermission() async {
     /// status can either be: granted, denied, restricted or permanentlyDenied
     var status = await Permission.location.status;
@@ -33,12 +33,23 @@ class _HomeState extends State<Home> {
     return false;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
+
+  getLocation() async {
+    bool result = await requestLocationPermission();
+    if (result) {
+      Provider.of<MapProvider>(context, listen: false).getUserCurrentLocation();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var pro = Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
-
       body: Stack(
         children: [
           Positioned(
@@ -46,13 +57,12 @@ class _HomeState extends State<Home> {
             child: GestureDetector(
               onTap: () async {
                 bool result = await requestLocationPermission();
-                if(result){
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CustomMap()));
-                }else{
+                if (result) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CustomMap()));
+                } else {
                   snackBar(context, "Location is not granted");
                 }
-
               },
               child: ShaderMask(
                 shaderCallback: (rect) {
@@ -78,7 +88,6 @@ class _HomeState extends State<Home> {
           buildHomeProfile(pro),
         ],
       ),
-
     );
   }
 }

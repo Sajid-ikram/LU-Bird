@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart' as loc;
@@ -29,7 +27,6 @@ class _CustomMapState extends State<CustomMap> {
 
   Uint8List? userLocationIcon;
   Uint8List? busLocationIcon;
-  loc.LocationData? userLocation;
   CameraPosition? userCameraPosition;
 
   @override
@@ -47,6 +44,7 @@ class _CustomMapState extends State<CustomMap> {
 
   @override
   Widget build(BuildContext context) {
+    var pro = Provider.of<MapProvider>(context, listen: false);
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("location").snapshots(),
@@ -64,13 +62,13 @@ class _CustomMapState extends State<CustomMap> {
             return const SizedBox();
           } else {
             return isIconSelected
-                ? Consumer<MapProvider>(
-                    builder: (BuildContext context, value, Widget? child) {
-                      print(
-                          "-------------------------------------------------------");
-                      return buildGoogleMap(snapshot);
-                    },
-                  )
+                ? pro.userLocation == null
+                    ? whenUserLocationNull(pro)
+                    : Consumer<MapProvider>(
+                        builder: (BuildContext context, value, Widget? child) {
+                          return buildGoogleMap(snapshot, pro);
+                        },
+                      )
                 : buildLoadingWidget();
           }
         },
@@ -78,7 +76,13 @@ class _CustomMapState extends State<CustomMap> {
     );
   }
 
-  GoogleMap buildGoogleMap(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+  whenUserLocationNull(MapProvider provider) {
+    provider.getUserCurrentLocation();
+    return buildLoadingWidget();
+  }
+
+  GoogleMap buildGoogleMap(
+      AsyncSnapshot<QuerySnapshot<Object?>> snapshot, MapProvider pro) {
     return GoogleMap(
       zoomGesturesEnabled: true,
       zoomControlsEnabled: true,
@@ -86,7 +90,8 @@ class _CustomMapState extends State<CustomMap> {
         userCameraPosition = cameraPosition;
       },
       initialCameraPosition: CameraPosition(
-        target: LatLng(userLocation!.latitude!, userLocation!.longitude!),
+        target:
+            LatLng(pro.userLocation!.latitude!, pro.userLocation!.longitude!),
         zoom: 15,
       ),
       mapType: MapType.normal,
@@ -95,21 +100,16 @@ class _CustomMapState extends State<CustomMap> {
           (element) {
             return element['name'] != "forUserLocation"
                 ? Marker(
-                    position: LatLng(
-                      element['latitude'],
-                      element['longitude'],
-                    ),
+                    position: LatLng(element['latitude'], element['longitude']),
                     markerId: MarkerId(element.id),
                     infoWindow: const InfoWindow(
                       title: "Route 1",
                     ),
-                    icon: BitmapDescriptor.fromBytes(
-                      busLocationIcon!,
-                    ),
+                    icon: BitmapDescriptor.fromBytes(busLocationIcon!),
                   )
                 : Marker(
-                    position: LatLng(
-                        userLocation!.latitude!, userLocation!.longitude!),
+                    position: LatLng(pro.userLocation!.latitude!,
+                        pro.userLocation!.longitude!),
                     markerId: MarkerId(element.id),
                     icon: BitmapDescriptor.fromBytes(userLocationIcon!),
                   );
@@ -120,20 +120,20 @@ class _CustomMapState extends State<CustomMap> {
         if (!_added) {
           _controller = controller;
           _added = true;
-          _onUserLocationChange();
+          _onUserLocationChange(pro);
         }
       },
     );
   }
 
-  Future<void> changeMyMap() async {
+  Future<void> changeMyMap(MapProvider pro) async {
     await _controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: userCameraPosition == null
               ? LatLng(
-                  userLocation!.latitude!,
-                  userLocation!.longitude!,
+                  pro.userLocation!.latitude!,
+                  pro.userLocation!.longitude!,
                 )
               : userCameraPosition!.target,
           zoom: userCameraPosition == null ? 15 : userCameraPosition!.zoom,
@@ -147,11 +147,8 @@ class _CustomMapState extends State<CustomMap> {
   getMarkers() async {
     userLocationIcon = await getBytesFromAssets("assets/user.png", 100);
     busLocationIcon = await getBytesFromAssets("assets/bus.png", 80);
-    userLocation = await location.getLocation();
 
-    if (userLocationIcon != null &&
-        busLocationIcon != null &&
-        userLocation != null) {
+    if (userLocationIcon != null && busLocationIcon != null) {
       setState(() {
         isIconSelected = true;
       });
@@ -160,19 +157,19 @@ class _CustomMapState extends State<CustomMap> {
     }
   }
 
-  Future<void> _onUserLocationChange() async {
+  Future<void> _onUserLocationChange(MapProvider pro) async {
     _locationSub = location.onLocationChanged.handleError((onError) {
       _locationSub!.cancel();
       setState(() {
         _locationSub = null;
       });
     }).listen((loc.LocationData currentLocation) async {
-      userLocation = currentLocation;
+      pro.userLocation = currentLocation;
       if (mounted) {
         Provider.of<MapProvider>(context, listen: false).onLocationChange();
       }
 
-      changeMyMap();
+      changeMyMap(pro);
     });
   }
 
