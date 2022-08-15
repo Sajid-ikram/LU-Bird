@@ -62,9 +62,7 @@ class _CustomMapState extends State<CustomMap> {
             return const SizedBox();
           } else {
             return isIconSelected
-                ? pro.userLocation == null
-                    ? whenUserLocationNull(pro)
-                    : Consumer<MapProvider>(
+                ? Consumer<MapProvider>(
                         builder: (BuildContext context, value, Widget? child) {
                           return buildGoogleMap(snapshot, pro);
                         },
@@ -76,10 +74,7 @@ class _CustomMapState extends State<CustomMap> {
     );
   }
 
-  whenUserLocationNull(MapProvider provider) {
-    provider.getUserCurrentLocation();
-    return buildLoadingWidget();
-  }
+
 
   GoogleMap buildGoogleMap(
       AsyncSnapshot<QuerySnapshot<Object?>> snapshot, MapProvider pro) {

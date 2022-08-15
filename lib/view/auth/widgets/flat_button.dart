@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 Widget flatButton({required String name, double? height, double? width}) {
   return Container(
     margin: EdgeInsets.only(right: 2.w),
-    height: height ?? 35.h,
+    height: height ?? 40.h,
     width: width ?? 140.w,
     decoration: BoxDecoration(
       color: Colors.black,

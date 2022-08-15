@@ -4,72 +4,102 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lu_bird/view/public_widgets/app_colors.dart';
 
-Padding buildExplore() {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 30.w),
+SizedBox buildExplore() {
+  List<Color> colors = [
+    const Color(0xff839AA8),
+    const Color(0xffA2B5BB),
+    const Color(0xff9CB4CC)
+  ];
+
+  List<IconData> icons = [
+    FontAwesomeIcons.bell,
+    FontAwesomeIcons.clipboardList,
+    FontAwesomeIcons.calendarWeek,
+  ];
+
+  List<String> titles = [
+    "Notices",
+    "Bus Schedule",
+    "Class Routine",
+
+  ];
+
+  return SizedBox(
+    width: 360.w,
+    //padding: EdgeInsets.symmetric(horizontal: 30.w),
     child: Column(
       children: [
         SizedBox(height: 70.h),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 12.h),
-                  child: const Icon(FontAwesomeIcons.bars),
-                ),
-                SizedBox(height: 130.h),
-                Text(
-                  "Explore",
-                  style:
-                      TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w800),
-                )
-              ],
-            ),
-            const Spacer(),
-          ],
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "Explore",
+                style: TextStyle(
+                    fontSize: 36.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff3F4E4F)),
+              ),
+            ],
+          ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 20.h),
-          height: 160.h,
-          width: double.infinity,
+          height: 260.h,
           decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(25.sp),
-            image: const DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(
-                "assets/notice.jpg",
-              ),
-            ),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 4,
-                  offset: const Offset(0, 7))
+                color: Colors.black.withOpacity(0.03),
+                spreadRadius: 3,
+                blurRadius: 15,
+              )
             ],
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 30.h,vertical: 20.sp),
-                child: Text(
-                  "Notices",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.w800
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {},
+                child: Container(
+                  width: 170.w,
+                  height: 220.h,
+                  margin: EdgeInsets.fromLTRB(
+                      index == 0 ? 30.w : 10.w, 20.w, 10.w, 30.w),
+                  decoration: BoxDecoration(
+                    color: colors[index],
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 7))
+                    ],
+                  ),
+                  padding: EdgeInsets.all(15.sp),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        icons[index],
+                        size: 50.sp,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 15.h),
+                      Text(
+                        titles[index],
+                        style: TextStyle(fontSize: 18.sp,color: Colors.white,fontWeight: FontWeight.w800),
+                      )
+                    ],
                   ),
                 ),
-              ),
-            ],
+              );
+            },
+            itemCount: 3,
           ),
-        ),
+        )
       ],
     ),
   );

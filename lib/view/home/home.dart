@@ -42,13 +42,16 @@ class _HomeState extends State<Home> {
   getLocation() async {
     bool result = await requestLocationPermission();
     if (result) {
-      Provider.of<MapProvider>(context, listen: false).getUserCurrentLocation();
+      if (mounted) {
+        Provider.of<MapProvider>(context, listen: false)
+            .getUserCurrentLocation();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var pro = Provider.of<ProfileProvider>(context, listen: false);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -66,15 +69,15 @@ class _HomeState extends State<Home> {
               },
               child: ShaderMask(
                 shaderCallback: (rect) {
-                  return const LinearGradient(
+                  return  LinearGradient(
                     begin: Alignment.center,
                     end: Alignment.topCenter,
-                    colors: [Colors.black, Colors.transparent],
+                    colors: [Colors.white, Colors.white.withOpacity(0.4)],
                   ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
                 },
                 blendMode: BlendMode.dstIn,
                 child: SizedBox(
-                  height: 430.h,
+                  height: 450.h,
                   width: 360.w,
                   child: Image.asset(
                     "assets/map.png",
@@ -84,8 +87,11 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          buildExplore(),
-          buildHomeProfile(pro),
+          Positioned(
+            top: 90.h,
+            child: buildExplore(),
+          ),
+          buildHomeProfile(context),
         ],
       ),
     );
