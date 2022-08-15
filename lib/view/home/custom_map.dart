@@ -40,6 +40,7 @@ class _CustomMapState extends State<CustomMap> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _locationSub!.cancel();
   }
 
   @override
@@ -63,10 +64,10 @@ class _CustomMapState extends State<CustomMap> {
           } else {
             return isIconSelected
                 ? Consumer<MapProvider>(
-                        builder: (BuildContext context, value, Widget? child) {
-                          return buildGoogleMap(snapshot, pro);
-                        },
-                      )
+                    builder: (BuildContext context, value, Widget? child) {
+                      return buildGoogleMap(snapshot, pro);
+                    },
+                  )
                 : buildLoadingWidget();
           }
         },
@@ -74,10 +75,9 @@ class _CustomMapState extends State<CustomMap> {
     );
   }
 
-
-
   GoogleMap buildGoogleMap(
       AsyncSnapshot<QuerySnapshot<Object?>> snapshot, MapProvider pro) {
+    print("----------------------------------");
     return GoogleMap(
       zoomGesturesEnabled: true,
       zoomControlsEnabled: true,
@@ -85,8 +85,9 @@ class _CustomMapState extends State<CustomMap> {
         userCameraPosition = cameraPosition;
       },
       initialCameraPosition: CameraPosition(
-        target:
-            LatLng(pro.userLocation!.latitude!, pro.userLocation!.longitude!),
+        target: pro.userLocation == null
+            ? const LatLng(24.89489077447926, 91.86879280019157)
+            : LatLng(pro.userLocation!.latitude!, pro.userLocation!.longitude!),
         zoom: 15,
       ),
       mapType: MapType.normal,
@@ -103,8 +104,10 @@ class _CustomMapState extends State<CustomMap> {
                     icon: BitmapDescriptor.fromBytes(busLocationIcon!),
                   )
                 : Marker(
-                    position: LatLng(pro.userLocation!.latitude!,
-                        pro.userLocation!.longitude!),
+                    position: pro.userLocation == null
+                        ? const LatLng(24.89489077447926, 91.86879280019157)
+                        : LatLng(pro.userLocation!.latitude!,
+                            pro.userLocation!.longitude!),
                     markerId: MarkerId(element.id),
                     icon: BitmapDescriptor.fromBytes(userLocationIcon!),
                   );
@@ -126,10 +129,10 @@ class _CustomMapState extends State<CustomMap> {
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: userCameraPosition == null
-              ? LatLng(
-                  pro.userLocation!.latitude!,
-                  pro.userLocation!.longitude!,
-                )
+              ? pro.userLocation == null
+                  ? const LatLng(24.89489077447926, 91.86879280019157)
+                  : LatLng(
+                      pro.userLocation!.latitude!, pro.userLocation!.longitude!)
               : userCameraPosition!.target,
           zoom: userCameraPosition == null ? 15 : userCameraPosition!.zoom,
           tilt: userCameraPosition == null ? 0 : userCameraPosition!.tilt,

@@ -6,9 +6,9 @@ import 'package:lu_bird/view/public_widgets/app_colors.dart';
 
 SizedBox buildExplore() {
   List<Color> colors = [
-    const Color(0xff839AA8),
-    const Color(0xffA2B5BB),
-    const Color(0xff9CB4CC)
+    const Color(0xff2B4865),
+    const Color(0xff355764),
+    const Color(0xff3C6F9C)
   ];
 
   List<IconData> icons = [
@@ -21,7 +21,6 @@ SizedBox buildExplore() {
     "Notices",
     "Bus Schedule",
     "Class Routine",
-
   ];
 
   return SizedBox(
@@ -46,7 +45,7 @@ SizedBox buildExplore() {
           ),
         ),
         Container(
-          height: 260.h,
+          height: 250.h,
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
@@ -63,13 +62,13 @@ SizedBox buildExplore() {
               return InkWell(
                 onTap: () {},
                 child: Container(
-                  width: 170.w,
+                  width: 150.w,
                   height: 220.h,
                   margin: EdgeInsets.fromLTRB(
                       index == 0 ? 30.w : 10.w, 20.w, 10.w, 30.w),
                   decoration: BoxDecoration(
                     color: colors[index],
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                           color: Colors.grey.withOpacity(0.2),
@@ -78,7 +77,6 @@ SizedBox buildExplore() {
                           offset: const Offset(0, 7))
                     ],
                   ),
-                  padding: EdgeInsets.all(15.sp),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -90,7 +88,10 @@ SizedBox buildExplore() {
                       SizedBox(height: 15.h),
                       Text(
                         titles[index],
-                        style: TextStyle(fontSize: 18.sp,color: Colors.white,fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800),
                       )
                     ],
                   ),
