@@ -59,12 +59,7 @@ class _GPSSettingState extends State<GPSSetting> {
                   _stopListening();
                 },
                 child: const Text("Stop Live Location")),
-            IconButton(
-              onPressed: () {
-                Provider.of<Authentication>(context, listen: false).signOut();
-              },
-              icon: const Icon(Icons.logout),
-            ),
+
           ],
         ),
       ),

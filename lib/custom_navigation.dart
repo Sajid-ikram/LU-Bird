@@ -3,8 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lu_bird/view/bus_info/bus_info.dart';
+import 'package:lu_bird/view/chat/chat.dart';
 import 'package:lu_bird/view/home/gps_settings.dart';
 import 'package:lu_bird/view/home/home.dart';
+import 'package:lu_bird/view/profile/profile.dart';
 import 'package:lu_bird/view/public_widgets/app_colors.dart';
 
 class CustomNavigation extends StatefulWidget {
@@ -26,9 +29,9 @@ class _CustomNavigationState extends State<CustomNavigation> {
 
   List<Widget> pages = [
     const Home(),
-    const Home(),
-    const Home(),
-    const GPSSetting(),
+    const BusInfo(),
+    const Chat(),
+    const Profile(),
   ];
 
   @override
