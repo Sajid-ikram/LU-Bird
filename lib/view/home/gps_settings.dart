@@ -24,6 +24,11 @@ class _GPSSettingState extends State<GPSSetting> {
   StreamSubscription<loc.LocationData>? _locationSub;
 
 
+  @override
+  void dispose() {
+    super.dispose();
+    _locationSub!.cancel();
+  }
 
 
 
