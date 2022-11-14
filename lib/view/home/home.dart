@@ -51,7 +51,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Stack(
         children: [
@@ -69,7 +68,7 @@ class _HomeState extends State<Home> {
               },
               child: ShaderMask(
                 shaderCallback: (rect) {
-                  return  LinearGradient(
+                  return LinearGradient(
                     begin: Alignment.center,
                     end: Alignment.topCenter,
                     colors: [Colors.white, Colors.white.withOpacity(0.4)],

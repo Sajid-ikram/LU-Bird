@@ -10,6 +10,8 @@ import 'package:lu_bird/view/auth/landing_page.dart';
 import 'package:lu_bird/view/auth/registration.dart';
 import 'package:lu_bird/view/auth/signin.dart';
 import 'package:lu_bird/view/home/gps_settings.dart';
+import 'package:lu_bird/view/notice/add_notice.dart';
+import 'package:lu_bird/view/notice/notice.dart';
 import 'package:lu_bird/view/public_widgets/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'initial.dart';
@@ -54,6 +56,8 @@ class MyApp extends StatelessWidget {
                 "LandingPage": (ctx) => const LandingPage(),
                 "MiddleOfHomeAndSignIn": (ctx) => const MiddleOfHomeAndSignIn(),
                 "GPSSetting": (ctx) => const GPSSetting(),
+                "Notice": (ctx) => const Notice(),
+                "AddNotice": (ctx) =>  AddNotice(),
               });
         },
       ),

@@ -60,7 +60,11 @@ SizedBox buildExplore() {
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () {},
+                onTap: () {
+                  if(index == 0){
+                    Navigator.of(context).pushNamed("Notice");
+                  }
+                },
                 child: Container(
                   width: 150.w,
                   height: 220.h,

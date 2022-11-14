@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/authentication.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:typed_data';
 import '../auth/widgets/snackBar.dart';
 
 
@@ -50,7 +47,7 @@ class _GPSSettingState extends State<GPSSetting> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: () {
+                onPressed: (){
                   _getLocation();
                 },
                 child: const Text("Add My Location")),
