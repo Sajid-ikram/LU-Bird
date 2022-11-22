@@ -6,7 +6,13 @@ class MapProvider extends ChangeNotifier {
   LocationData? userLocation;
 
   getUserCurrentLocation() async {
-    userLocation = await location.getLocation();
+    try {
+      userLocation = await location.getLocation();
+    } catch (err) {
+      print(err);
+    }
+
+    notifyListeners();
   }
 
   onLocationChange() {

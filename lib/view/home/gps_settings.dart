@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:location/location.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 import '../auth/widgets/snackBar.dart';
-
 
 class GPSSetting extends StatefulWidget {
   const GPSSetting({Key? key}) : super(key: key);
@@ -20,14 +20,11 @@ class _GPSSettingState extends State<GPSSetting> {
   final loc.Location location = loc.Location();
   StreamSubscription<loc.LocationData>? _locationSub;
 
-
   @override
   void dispose() {
     super.dispose();
     _locationSub!.cancel();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +44,7 @@ class _GPSSettingState extends State<GPSSetting> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: (){
+                onPressed: () {
                   _getLocation();
                 },
                 child: const Text("Add My Location")),
@@ -61,7 +58,6 @@ class _GPSSettingState extends State<GPSSetting> {
                   _stopListening();
                 },
                 child: const Text("Stop Live Location")),
-
           ],
         ),
       ),
@@ -78,6 +74,7 @@ class _GPSSettingState extends State<GPSSetting> {
 
       if (isAllowed) {
         locationResult = await location.getLocation();
+        print(locationResult.longitude);
       }
 
       if (locationResult != null) {
@@ -98,15 +95,18 @@ class _GPSSettingState extends State<GPSSetting> {
   }
 
   Future<void> _onLocationChange() async {
+    location.changeSettings(
+        /*accuracy: LocationAccuracy.high,*/
+        interval: 5000,
+        distanceFilter: 1);
     _locationSub = location.onLocationChanged.handleError((onError) {
-      print(onError);
       _locationSub!.cancel();
       setState(() {
         _locationSub = null;
       });
     }).listen((loc.LocationData currentLocation) async {
       var pro = Provider.of<ProfileProvider>(context, listen: false);
-      await Future.delayed(const Duration(seconds: 2));
+
       await FirebaseFirestore.instance
           .collection('location')
           .doc(pro.currentUserUid)

@@ -1,5 +1,6 @@
 import 'package:lu_bird/providers/map_provider.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
+import 'package:lu_bird/view/home/socketTester.dart';
 import 'package:lu_bird/view/home/widgets/home_explore.dart';
 import 'package:lu_bird/view/home/widgets/home_profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -65,6 +66,9 @@ class _HomeState extends State<Home> {
                 } else {
                   snackBar(context, "Location is not granted");
                 }
+
+               /* Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SocketTester()));*/
               },
               child: ShaderMask(
                 shaderCallback: (rect) {
