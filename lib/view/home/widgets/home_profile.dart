@@ -22,12 +22,9 @@ Positioned buildHomeProfile(BuildContext context) {
               provider.profileUrl != ""
                   ? GestureDetector(
                       onTap: () {
-                        /*Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return ;
-                    }),
-                  );*/
+
+                        Navigator.of(context)
+                            .pushNamed("Profile");
                       },
                       child: CircleAvatar(
                         backgroundColor: Colors.grey,
@@ -38,7 +35,10 @@ Positioned buildHomeProfile(BuildContext context) {
                       ),
                     )
                   : GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed("Profile");
+                      },
                       child: const CircleAvatar(
                         backgroundColor: Colors.grey,
                         radius: 21,

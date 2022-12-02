@@ -51,27 +51,27 @@ class _CustomMapState extends State<CustomMap> {
 
     _polyline.addAll([
       Polyline(
-        polylineId: const PolylineId('2'),
+        polylineId: const PolylineId('1'),
         points: RoutesCoordinate().route1,
-        color: const Color(0xff4C3575),
+        color: const Color(0xff625757),
       ),
       Polyline(
         polylineId: const PolylineId('2'),
         points: RoutesCoordinate().route2,
-        color: const Color(0xffB2B2B2),
+        color: const Color(0xff30475E),
       ),
       Polyline(
-        polylineId: const PolylineId('2'),
+        polylineId: const PolylineId('3'),
         points: RoutesCoordinate().route3,
         color: const Color(0xffF96666),
       ),
       Polyline(
-        polylineId: const PolylineId('2'),
+        polylineId: const PolylineId('4'),
         points: RoutesCoordinate().route4,
-        color: Color(0xffA5F1E9),
+        color: const Color(0xff999B84),
       ),
       Polyline(
-        polylineId: const PolylineId('1'),
+        polylineId: const PolylineId('5'),
         points: RoutesCoordinate().commonLetLng,
         color: const Color(0xff6D9886),
       )
@@ -160,6 +160,7 @@ class _CustomMapState extends State<CustomMap> {
         userCameraPosition = cameraPosition;
       },
       polylines: _polyline,
+
       initialCameraPosition: CameraPosition(
         target: pro.userLocation == null
             ? const LatLng(24.89502182528581, 91.86866700677376)

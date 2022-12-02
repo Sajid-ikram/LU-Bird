@@ -10,6 +10,8 @@ class Api_Endpoints {
 
   static const String NOTICE = "${baseUrl}notice";
 
+  static const String ROUTINE = "${baseUrl}routine";
+
 
 
 }

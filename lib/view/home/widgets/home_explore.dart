@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lu_bird/view/public_widgets/app_colors.dart';
 
+import '../../profile/sub_page/bus_and_routine.dart';
+
 SizedBox buildExplore() {
   List<Color> colors = [
     const Color(0xff2B4865),
@@ -61,8 +63,22 @@ SizedBox buildExplore() {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  if(index == 0){
+                  if (index == 0) {
                     Navigator.of(context).pushNamed("Notice");
+                  } else if (index == 1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BusSchedule(name: "Bus Schedule"),
+                      ),
+                    );
+                  } else if (index == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BusSchedule(name: "Routine"),
+                      ),
+                    );
                   }
                 },
                 child: Container(

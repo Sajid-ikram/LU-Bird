@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lu_bird/custom_navigation.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/auth/landing_page.dart';
 import 'package:lu_bird/view/auth/verification.dart';
@@ -63,7 +62,7 @@ class _MiddleOfHomeAndSignInState extends State<MiddleOfHomeAndSignIn> {
           return buildLoadingWidget();
         }
         if (snapshot.data != null && snapshot.data!.emailVerified) {
-          return const CustomNavigation();
+          return const Home();
         }
         return snapshot.data == null
             ? const LandingPage()
