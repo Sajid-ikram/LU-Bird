@@ -30,15 +30,6 @@ class BusInfo extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          padding: EdgeInsets.only(left: 20.w),
-          icon: const Icon(Icons.arrow_back),
-        ),
       ),
       body: ListView.builder(
         padding: EdgeInsets.only(top: 20.h),

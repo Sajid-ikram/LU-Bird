@@ -27,21 +27,31 @@ class RoutineClient {
   }
 
   Future<RoutineModel> getRoutine(String type) async {
-    var url = Uri.parse(Api_Endpoints.ROUTINE + "?type=$type");
+    var url = Uri.parse("${Api_Endpoints.ROUTINE}?type=$type");
     try {
+
       var response = await http.get(url);
 
       List<dynamic> routine = jsonDecode(response.body);
 
+
       if (response.statusCode == 200) {
+        print("------------------------------- res");
+        print(response.body);
+        print(routine);
         if (routine.isEmpty) {
+          print("------------------------------- empty");
           throw Exception("No data found");
         }
-        return routine[0];
+        print("------------------------------- 2222222222222222222222 ");
+        print(routine[0]);
+        return RoutineModel.fromJson(routine[0]);
       } else {
+        print("------------------------------- else ");
         throw Exception("Fail To load");
       }
     } catch (err) {
+      print("------------------------------- catch ");
       throw Exception(err);
     }
   }

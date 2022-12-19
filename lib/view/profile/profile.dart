@@ -45,7 +45,6 @@ class Profile extends StatelessWidget {
 Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
   final List<String> listName = [
     "Edit Profile",
-    "Bus Info",
     "About Us",
     "Privacy Policy",
     "Live Track",
@@ -54,7 +53,6 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
 
   final List<IconData> listIcons = [
     Icons.person_outline,
-    Icons.directions_bus,
     Icons.groups,
     Icons.privacy_tip,
     Icons.location_on,
@@ -69,19 +67,6 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
         children: [
           SizedBox(
             height: size.height * 0.12,
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 10.w, top: 35.h),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ],
-            ),
           ),
           profileImage(size),
           Consumer<ProfileProvider>(builder: (_, __, ___) {
@@ -112,15 +97,13 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const EditProfile()));
                     } else if (index == 1) {
-                      Navigator.of(context).pushNamed("BusInfo");
-                    } else if (index == 2) {
                       //Navigator.of(context).pushNamed("Favourite");
-                    } else if (index == 3) {
+                    } else if (index == 2) {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const PrivacyPolicy()));
-                    } else if (index == 4) {
+                    } else if (index == 3) {
                       Navigator.of(context).pushNamed("GPSSetting");
-                    } else if (index == 5) {
+                    } else if (index == 4) {
                       Provider.of<Authentication>(context, listen: false)
                           .signOut();
                     }
@@ -131,7 +114,7 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
                   ),
                 );
               },
-              itemCount: 6,
+              itemCount: listIcons.length,
             ),
           ),
           //const SizedBox(height: 55),

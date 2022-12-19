@@ -46,11 +46,12 @@ class RoutineRepo {
   Future<RoutineModel> getRoutine(String type) async {
     try {
       RoutineModel response =
-      await RoutineRepo.instance.getRoutineClient().getRoutine(type);
+          await RoutineRepo.instance.getRoutineClient().getRoutine(type);
 
       return response;
     } catch (err) {
-      throw Exception("No routine available");
+      print("------------------------------- err");
+      return RoutineModel(routineUrl: "", sId: "", type: "");
     }
   }
 

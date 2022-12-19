@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +13,8 @@ class ProfileProvider extends ChangeNotifier {
   String email = '';
   String department = '';
   String currentUserUid = '';
+
+  bool refreshAssignBus = false;
 
   getUserInfo() async {
 
@@ -51,6 +55,12 @@ class ProfileProvider extends ChangeNotifier {
     } catch (e) {
       return onError(context, "Having problem connecting to the server");
     }
+  }
+
+
+  refreshAssignBusPage(){
+    refreshAssignBus = !refreshAssignBus;
+    notifyListeners();
   }
 
 }
