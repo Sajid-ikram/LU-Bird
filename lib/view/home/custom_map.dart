@@ -47,8 +47,6 @@ class _CustomMapState extends State<CustomMap> {
     getMarkers();
     initSocket();
 
-
-
     _polyline.addAll([
       Polyline(
         polylineId: const PolylineId('1'),
@@ -97,6 +95,7 @@ class _CustomMapState extends State<CustomMap> {
       });
 
       socket.connected;
+
       socket.on("locationChange", (data) {
         int index =
             locationList.indexWhere((element) => element['id'] == data['id']);
@@ -106,7 +105,7 @@ class _CustomMapState extends State<CustomMap> {
         } else {
           locationList.add(data);
         }
-        print("------------------------------------- changing");
+        print("+++++++++++++++++++++++++++++++++++++++ changing");
 
         Provider.of<MapProvider>(context, listen: false).onLocationChange();
       });
@@ -120,31 +119,13 @@ class _CustomMapState extends State<CustomMap> {
   Widget build(BuildContext context) {
     var pro = Provider.of<MapProvider>(context, listen: false);
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection("location").snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text("Something went wrong"));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildLoadingWidget();
-          }
-
-          final data = snapshot.data;
-
-          if (data != null && data.docs.isEmpty) {
-            return const SizedBox();
-          } else {
-            return isIconSelected
-                ? Consumer<MapProvider>(
-                    builder: (BuildContext context, value, Widget? child) {
-                      return buildGoogleMap(pro);
-                    },
-                  )
-                : buildLoadingWidget();
-          }
-        },
-      ),
+      body: isIconSelected
+          ? Consumer<MapProvider>(
+              builder: (BuildContext context, value, Widget? child) {
+                return buildGoogleMap(pro);
+              },
+            )
+          : buildLoadingWidget(),
     );
   }
 
@@ -155,12 +136,10 @@ class _CustomMapState extends State<CustomMap> {
       zoomControlsEnabled: true,
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
-
       onCameraMove: (CameraPosition cameraPosition) {
         userCameraPosition = cameraPosition;
       },
       polylines: _polyline,
-
       initialCameraPosition: CameraPosition(
         target: pro.userLocation == null
             ? const LatLng(24.89502182528581, 91.86866700677376)
@@ -174,8 +153,8 @@ class _CustomMapState extends State<CustomMap> {
             return Marker(
               position: LatLng(element['latitude'], element['longitude']),
               markerId: MarkerId(element["id"]),
-              infoWindow: const InfoWindow(
-                title: "Route 1",
+              infoWindow: InfoWindow(
+                title: "Route ${element['route']}",
               ),
               icon: BitmapDescriptor.fromBytes(busLocationIcon!),
             );

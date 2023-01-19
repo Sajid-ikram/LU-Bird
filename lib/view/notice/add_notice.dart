@@ -15,22 +15,29 @@ import '../public_widgets/custom_button.dart';
 import '../public_widgets/custom_loading.dart';
 
 class AddNotice extends StatefulWidget {
-  AddNotice({Key? key, this.notice}) : super(key: key);
+  AddNotice({Key? key, this.notice, this.reloadPage}) : super(key: key);
 
   NoticeModel? notice;
+  Function? reloadPage;
 
   @override
   State<AddNotice> createState() => _AddNoticeState();
 }
 
 class _AddNoticeState extends State<AddNotice> {
-  TextEditingController descriptionController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
+  late TextEditingController descriptionController;
 
   final picker = ImagePicker();
   late File _imageFile;
   bool isSelected = false;
+
+  @override
+  void initState() {
+    descriptionController = TextEditingController(
+        text: widget.notice != null ? widget.notice!.description : "");
+
+    super.initState();
+  }
 
   Future pickImage(ImageSource imageSource) async {
     try {
@@ -65,15 +72,28 @@ class _AddNoticeState extends State<AddNotice> {
           final result = await ref.putFile(_imageFile);
           url = await result.ref.getDownloadURL();
         }
+        bool response = false;
 
-        bool response = await NoticeRepo()
-            .createNotice(pro.profileName, descriptionController.text, url);
+        if (widget.notice == null) {
+          response = await NoticeRepo()
+              .createNotice(pro.profileName, descriptionController.text, url);
+        } else {
+          response = await NoticeRepo().updateNotice(
+              pro.profileName,
+              descriptionController.text,
+              url.isEmpty ? widget.notice!.imageUrl ?? "" : url,
+              widget.notice!.sId ?? "");
+          if (response) {
+            widget.reloadPage!(true);
+          }
+        }
 
         Navigator.of(context).pop();
         Navigator.of(context).pop();
 
         if (!response) {
-          snackBar(context, "Fail to add notice");
+          snackBar(context,
+              "Fail to ${widget.notice == null ? "add" : "update"} notice");
         }
       } catch (e) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -111,9 +131,9 @@ class _AddNoticeState extends State<AddNotice> {
                       validate();
                     },
                     child: customButton(
-                        text: "Post",
+                        text: widget.notice == null ? "Post" : "Update",
                         fontSize: 16.sp,
-                        width: 90.w,
+                        width: 100.w,
                         height: 40.h,
                         color: Colors.black),
                   )

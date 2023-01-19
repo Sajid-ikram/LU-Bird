@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lu_bird/models/notice_model.dart';
+import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/repository/notice_repo.dart';
 import 'package:lu_bird/view/notice/widgets/single_notice.dart';
+import 'package:provider/provider.dart';
 
 import '../public_widgets/custom_loading.dart';
 
@@ -23,7 +25,7 @@ class _NoticeState extends State<Notice> {
   @override
   void initState() {
     super.initState();
-    getData();
+    getData(false);
 
     scrollController = ScrollController();
 
@@ -32,13 +34,17 @@ class _NoticeState extends State<Notice> {
               scrollController.position.maxScrollExtent * 0.95 &&
           !isLoading) {
         if (hasMore) {
-          getData();
+          getData(false);
         }
       }
     });
   }
 
-  getData() async {
+  getData(bool refresh) async {
+    if (refresh) {
+      hasMore = true;
+      listOfNotice.clear();
+    }
     setState(() {
       isLoading = true;
     });
@@ -58,14 +64,17 @@ class _NoticeState extends State<Notice> {
 
   @override
   Widget build(BuildContext context) {
+    var pro = Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+
         title: const Text("Notices", style: TextStyle(color: Colors.black)),
+
         centerTitle: true,
         leading: Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               Navigator.of(context).pop();
             },
             child: const Icon(Icons.arrow_back),
@@ -77,16 +86,17 @@ class _NoticeState extends State<Notice> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          IconButton(
-            padding: EdgeInsets.only(right: 20.w),
-            onPressed: () {
-              Navigator.of(context).pushNamed("AddNotice");
-            },
-            icon: const Icon(
-              Icons.add,
-              color: Colors.black,
+          if (pro.role == "admin")
+            IconButton(
+              padding: EdgeInsets.only(right: 20.w),
+              onPressed: () {
+                Navigator.of(context).pushNamed("AddNotice");
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.black,
+              ),
             ),
-          ),
         ],
       ),
       body: ListView.builder(
@@ -99,6 +109,8 @@ class _NoticeState extends State<Notice> {
 
           return SingleNotice(
             notice: listOfNotice[index],
+            role: pro.role,
+            reloadPage: getData,
           );
         },
         itemCount: listOfNotice.length + (hasMore ? 1 : 0),

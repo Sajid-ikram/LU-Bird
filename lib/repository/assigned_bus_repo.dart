@@ -41,9 +41,20 @@ class AssignedBusRepo {
 
   Future<List<AssignedBusModel>> getAssignedBusses(String timeSlot) async {
     try {
-      List<AssignedBusModel> response =
-          await AssignedBusRepo.instance.getAssignedBusClient().getAssignedBusses(timeSlot);
+      List<AssignedBusModel> response = await AssignedBusRepo.instance
+          .getAssignedBusClient()
+          .getAssignedBusses(timeSlot);
 
+      return response;
+    } catch (err) {
+      throw Exception("Something went wrong");
+    }
+  }
+
+  Future<bool> deleteBus(String busNumber) async {
+    try {
+      bool response =
+          await AssignedBusRepo.instance.getAssignedBusClient().deleteBus(busNumber);
 
       return response;
     } catch (err) {

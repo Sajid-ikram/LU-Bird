@@ -2,11 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lu_bird/models/notice_model.dart';
+import 'package:lu_bird/view/notice/add_notice.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../../repository/notice_repo.dart';
+import '../../auth/widgets/snackBar.dart';
+
+enum SampleItem { update, delete }
+
 class SingleNotice extends StatelessWidget {
-  const SingleNotice({Key? key, required this.notice}) : super(key: key);
+  const SingleNotice(
+      {Key? key,
+      required this.notice,
+      required this.role,
+      required this.reloadPage})
+      : super(key: key);
   final NoticeModel notice;
+  final String role;
+  final Function reloadPage;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +30,7 @@ class SingleNotice extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-            color:  Colors.grey.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [
@@ -45,6 +57,39 @@ class SingleNotice extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              const Spacer(),
+              if (role == "admin")
+                PopupMenuButton<SampleItem>(
+                  onSelected: (SampleItem item) async {
+                    if (item == SampleItem.update) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddNotice(
+                                notice: notice, reloadPage: reloadPage)),
+                      );
+                    } else {
+                      bool response = await NoticeRepo().deleteNotice(
+                          notice.sId ?? "", notice.imageUrl ?? "");
+                      if (response) {
+                        reloadPage(true);
+                      } else {
+                        snackBar(context, "Fail to delete notice");
+                      }
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<SampleItem>>[
+                    const PopupMenuItem<SampleItem>(
+                      value: SampleItem.update,
+                      child: Text('Update'),
+                    ),
+                    const PopupMenuItem<SampleItem>(
+                      value: SampleItem.delete,
+                      child: Text('Delete'),
+                    ),
+                  ],
+                ),
             ],
           ),
           SizedBox(height: 14.h),
