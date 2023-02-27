@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart' as loc;
@@ -95,7 +93,6 @@ class _CustomMapState extends State<CustomMap> {
       });
 
       socket.connected;
-
       socket.on("locationChange", (data) {
         int index =
             locationList.indexWhere((element) => element['id'] == data['id']);
@@ -105,9 +102,10 @@ class _CustomMapState extends State<CustomMap> {
         } else {
           locationList.add(data);
         }
-        print("+++++++++++++++++++++++++++++++++++++++ changing");
 
-        Provider.of<MapProvider>(context, listen: false).onLocationChange();
+        if (mounted) {
+          Provider.of<MapProvider>(context, listen: false).onLocationChange();
+        }
       });
     } catch (err) {
       print(err);
@@ -150,11 +148,13 @@ class _CustomMapState extends State<CustomMap> {
       markers: Set<Marker>.of(
         locationList.map(
           (element) {
+            print("-----------------------------------");
             return Marker(
               position: LatLng(element['latitude'], element['longitude']),
               markerId: MarkerId(element["id"]),
               infoWindow: InfoWindow(
                 title: "Route ${element['route']}",
+                snippet: "${element['availableSeat']} seat available",
               ),
               icon: BitmapDescriptor.fromBytes(busLocationIcon!),
             );

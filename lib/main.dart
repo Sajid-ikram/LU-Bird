@@ -9,7 +9,7 @@ import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/auth/landing_page.dart';
 import 'package:lu_bird/view/auth/registration.dart';
 import 'package:lu_bird/view/auth/signin.dart';
-import 'package:lu_bird/view/profile/sub_page/bus_info.dart';
+import 'package:lu_bird/view/bus_info/bus_info.dart';
 import 'package:lu_bird/view/home/gps_settings.dart';
 import 'package:lu_bird/view/notice/add_notice.dart';
 import 'package:lu_bird/view/notice/notice.dart';

@@ -2,7 +2,8 @@
 
 class Api_Endpoints {
   //static const baseUrl = "https://lu-bus-tracker-backend.vercel.app/";
-  static const baseUrl = "http://10.0.2.2:8000/";
+  //static const baseUrl = "http://10.0.2.2:8000/";
+  static const baseUrl = "https://lu-bus-tracker.onrender.com/";
 
 
 

@@ -94,7 +94,7 @@ class _AssignedBusState extends State<AssignedBus> {
           style: TextStyle(
             fontSize: 19.sp,
             fontWeight: FontWeight.w500,
-            color: primaryColor,
+            color: Colors.black,
           ),
         ),
       ),

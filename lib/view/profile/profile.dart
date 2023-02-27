@@ -1,17 +1,20 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/profile/profile_widget/profile_image.dart';
 import 'package:lu_bird/view/profile/profile_widget/profile_list.dart';
+import 'package:lu_bird/view/profile/sub_page/admin_panel.dart';
 import 'package:lu_bird/view/profile/sub_page/edit_profile.dart';
 import 'package:lu_bird/view/profile/sub_page/privacy_policy.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/authentication.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,7 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
     "Edit Profile",
     "About Us",
     "Privacy Policy",
-    "Live Track",
+    "Admin Panel",
     "LogOut",
   ];
 
@@ -55,7 +58,7 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
     Icons.person_outline,
     Icons.groups,
     Icons.privacy_tip,
-    Icons.location_on,
+    Icons.security,
     Icons.login_outlined,
   ];
 
@@ -68,7 +71,7 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
           SizedBox(
             height: size.height * 0.12,
           ),
-          profileImage(size),
+          const ProfileImage(),
           Consumer<ProfileProvider>(builder: (_, __, ___) {
             return Text(
               pro.profileName.isEmpty ? "Unknown Name" : pro.profileName,
@@ -102,7 +105,9 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const PrivacyPolicy()));
                     } else if (index == 3) {
-                      Navigator.of(context).pushNamed("GPSSetting");
+                      //Navigator.of(context).pushNamed("GPSSetting");
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const AdminPanel()));
                     } else if (index == 4) {
                       Provider.of<Authentication>(context, listen: false)
                           .signOut();

@@ -7,7 +7,7 @@ import 'package:lu_bird/view/assigned_bus/assigned_bus.dart';
 import 'package:lu_bird/view/home/gps_settings.dart';
 import 'package:lu_bird/view/home/home.dart';
 import 'package:lu_bird/view/profile/profile.dart';
-import 'package:lu_bird/view/profile/sub_page/bus_info.dart';
+import 'package:lu_bird/view/bus_info/bus_info.dart';
 import 'package:lu_bird/view/public_widgets/app_colors.dart';
 
 class CustomNavigation extends StatefulWidget {
