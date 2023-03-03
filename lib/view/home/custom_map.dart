@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart' as loc;
@@ -13,6 +14,7 @@ import '../public_widgets/custom_loading.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:firebase_database/firebase_database.dart';
 
 class CustomMap extends StatefulWidget {
   const CustomMap({Key? key}) : super(key: key);
@@ -27,6 +29,7 @@ class _CustomMapState extends State<CustomMap> {
   bool _added = false;
   StreamSubscription<loc.LocationData>? _locationSub;
   late GoogleMapController _controller;
+  bool firstTime = false;
 
   Uint8List? userLocationIcon;
   Uint8List? busLocationIcon;
@@ -44,6 +47,42 @@ class _CustomMapState extends State<CustomMap> {
 
     getMarkers();
     initSocket();
+
+    FirebaseDatabase.instance.ref().child('GPS').onValue.listen((event) {
+      final data = event.snapshot.value;
+
+      if (data != null) {
+        var map = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+        int index =
+        locationList.indexWhere((element) => element['id'] == map['id']);
+        if (index >= 0) {
+          locationList[index]["latitude"] = map["f_latitude"];
+          locationList[index]["longitude"] = map["f_longitude"];
+        } else {
+          if(firstTime){
+            locationList.add(  {
+              "id": map["id"],
+              "longitude": map["f_longitude"],
+              "latitude": map["f_latitude"],
+              "route": "Unknown",
+              "availableSeat": "Unknown",
+              "serial" : 34
+
+            });
+          }else{
+            firstTime = true;
+          }
+
+
+        }
+
+        if (mounted) {
+          Provider.of<MapProvider>(context, listen: false).onLocationChange();
+        }
+      }else{
+        print("no data");
+      }
+    });
 
     _polyline.addAll([
       Polyline(
@@ -106,6 +145,7 @@ class _CustomMapState extends State<CustomMap> {
         if (mounted) {
           Provider.of<MapProvider>(context, listen: false).onLocationChange();
         }
+
       });
     } catch (err) {
       print(err);
@@ -134,6 +174,7 @@ class _CustomMapState extends State<CustomMap> {
       zoomControlsEnabled: true,
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
+      padding:  const EdgeInsets.only(top: 40),
       onCameraMove: (CameraPosition cameraPosition) {
         userCameraPosition = cameraPosition;
       },

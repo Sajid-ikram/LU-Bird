@@ -20,12 +20,12 @@ class ProfileProvider extends ChangeNotifier {
   bool refreshAssignBus = false;
 
   getUserInfo() async {
-
-
     final User? user = FirebaseAuth.instance.currentUser;
-    if(user!=null){
-      DocumentSnapshot userInfo =
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    if (user != null) {
+      DocumentSnapshot userInfo = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
       profileUrl = userInfo["url"];
       profileName = userInfo["name"];
       role = userInfo["role"];
@@ -34,13 +34,11 @@ class ProfileProvider extends ChangeNotifier {
       currentUserUid = user.uid;
       notifyListeners();
     }
-
   }
 
   Future updateProfileInfo({
     required String name,
     required String department,
-
     required BuildContext context,
   }) async {
     try {
@@ -48,7 +46,6 @@ class ProfileProvider extends ChangeNotifier {
         {
           "name": name,
           "department": department,
-
         },
       );
       profileName = name;
@@ -69,10 +66,8 @@ class ProfileProvider extends ChangeNotifier {
       FirebaseFirestore.instance.collection("users").doc(uid).update(
         {
           "role": role,
-
         },
       );
-      this.role = role;
     } catch (e) {
       return onError(context, "Having problem connecting to the server");
     }
@@ -99,10 +94,8 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-
-  refreshAssignBusPage(){
+  refreshAssignBusPage() {
     refreshAssignBus = !refreshAssignBus;
     notifyListeners();
   }
-
 }

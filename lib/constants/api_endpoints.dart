@@ -15,6 +15,8 @@ class Api_Endpoints {
 
   static const String ASSIGN_BUS = "${baseUrl}assignedBus";
 
+  static const String CHANGE_LOCATION = "${baseUrl}map/changeLocation";
+
 
 
 
