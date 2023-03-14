@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lu_bird/providers/profile_provider.dart';
 import 'package:lu_bird/view/profile/profile_widget/profile_image.dart';
 import 'package:lu_bird/view/profile/profile_widget/profile_list.dart';
+import 'package:lu_bird/view/profile/sub_page/about_us.dart';
 import 'package:lu_bird/view/profile/sub_page/admin_panel.dart';
 import 'package:lu_bird/view/profile/sub_page/edit_profile.dart';
 import 'package:lu_bird/view/profile/sub_page/privacy_policy.dart';
@@ -100,7 +101,8 @@ Widget topWidget(Size size, ProfileProvider pro, BuildContext context) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const EditProfile()));
                       } else if (index == 1) {
-                        //Navigator.of(context).pushNamed("Favourite");
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const AboutUs()));
                       } else if (index == 2) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const PrivacyPolicy()));

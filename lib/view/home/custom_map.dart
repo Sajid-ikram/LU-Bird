@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lu_bird/constants/api_endpoints.dart';
@@ -64,8 +65,8 @@ class _CustomMapState extends State<CustomMap> {
               "id": map["id"],
               "longitude": map["f_longitude"],
               "latitude": map["f_latitude"],
-              "route": "Unknown",
-              "availableSeat": "Unknown",
+              "route": map["route"],
+              "availableSeat": map["availableSeat"],
               "serial" : 34
 
             });
@@ -174,7 +175,7 @@ class _CustomMapState extends State<CustomMap> {
       zoomControlsEnabled: true,
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
-      padding:  const EdgeInsets.only(top: 40),
+      padding:   EdgeInsets.only(top: 35.h),
       onCameraMove: (CameraPosition cameraPosition) {
         userCameraPosition = cameraPosition;
       },

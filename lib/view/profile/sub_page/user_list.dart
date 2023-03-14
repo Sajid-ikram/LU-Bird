@@ -177,7 +177,7 @@ class _UserListState extends State<UserList> {
             : role == "driver"
                 ? "Driver"
                 : "User",
-        style: GoogleFonts.inter(
+        style: TextStyle(
           fontSize: 15.sp,
           fontWeight: FontWeight.w400,
         ),
